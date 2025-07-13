@@ -157,3 +157,35 @@ public class Order {
 - 영역별로 모듈이 위치할 패키지로 구성
 - 도메인이 크면 하위 도메인으로 나누고 각 하위 도메인 마다 별도 패키지를 구성
 - 도메인 모듈은 도메인에 속한 애그리거트를 기준으로 다시 패키지를 구성
+
+---
+
+# 의문
+
+## OrderService는 응용 영역이고 CaculateDiscountService는 도메인 서비스인 이유?
+
+- 응용 서비스는 도메인 객체들을 이용해서 흐름만 조정, 비니지스 로직이 필요하면 이걸 도메인 서비스로 분리해서 응용서비스에서 도메인 서비스를 호출
+- ex) 게시글 작성할때 특정 단어 들어가면 안된다는 비지니스 로직이 있으면 이거를 검사하는 서비스(도메인 서비스)로 분리해서 사용
+```java
+// PostService = 응용 영역 서비스
+public class PostService {
+
+    private final ContentFilterService contentFilterService; // 도메인 영역 서비스
+    private final PostRepository postRepository;
+
+    public PostService(ContentFilterService contentFilterService,
+                       PostRepository postRepository) {
+        this.contentFilterService = contentFilterService;
+        this.postRepository = postRepository;
+    }
+
+    public void writePost(String authorId, String title, String content) {
+        // 도메인 서비스에 위임
+        contentFilterService.validate(content);
+
+        Post post = new Post(authorId, title, content);
+        postRepository.save(post);
+    }
+}
+
+```
