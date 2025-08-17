@@ -171,3 +171,14 @@ public String edit(@PathVariable("id") Long id,
 ```
 
 - 오프라인 잠금이 필요한 경우 잠금을 저장하는 DDL을 정의하고 LockManager 구현체를 구현하여 사용
+- DDL 예시
+```
+create table locks (
+  type varchar(255),
+  id varchar(255),
+  lockid varchar(255),
+  expiration_time datetime,
+  primary key ('type', id)
+  )
+  create unique index locks idx ON locks (lockid);
+```
